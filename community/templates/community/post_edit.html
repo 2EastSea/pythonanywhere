@@ -1,0 +1,16 @@
+<!-- templates/community/post_edit.html -->
+
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>글 작성</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">저장</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

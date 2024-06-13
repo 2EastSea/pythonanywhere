@@ -1,0 +1,50 @@
+<!-- community/templates/community/post_detail.html -->
+
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="font-weight-bold">{{ post.title }}</h1>
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <p class="card-text">{{ post.content }}</p>
+            </div>
+        </div>
+        <p>작성자: {{ post.author.username }}</p>
+        <p>작성일: {{ post.created_at }}</p>
+
+        {% if user.is_authenticated %}
+            {% if user == post.author %}
+                <a href="{% url 'post_edit' post.pk %}" class="btn btn-dark mr-2">수정</a>
+                <a href="{% url 'post_delete' post.pk %}" class="btn btn-dark">삭제</a>
+            {% endif %}
+            <form action="{% url 'post_like' post.pk %}" method="post" class="mt-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">👍 {{ post.likes.count }}</button>
+            </form>
+            <form action="{% url 'post_dislike' post.pk %}" method="post" class="mt-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">👎 {{ post.dislikes.count }}</button>
+            </form>
+        {% endif %}
+
+        <h2 class="mt-4">댓글</h2>
+        <ul class="list-unstyled">
+            {% for comment in post.comments.all %}
+                <li>{{ comment.content }} - <small>{{ comment.author.username }}</small></li>
+            {% endfor %}
+        </ul>
+
+        {% if user.is_authenticated %}
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">댓글 달기</button>
+            </form>
+        {% else %}
+            <p class="mt-3">댓글을 작성하려면 <a href="{% url 'login' %}" class="btn btn-primary">로그인</a> 해주세요.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
